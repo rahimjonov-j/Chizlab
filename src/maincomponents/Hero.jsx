@@ -1,11 +1,12 @@
 import { MorphingText } from "@/components/ui/text-morphing";
 import { RippleButton } from "../components/ripple";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
+
 export default function Hero() {
+  const scrollToCTA = () => {
+  const section = document.getElementById("cta");
+  section?.scrollIntoView({ behavior: "smooth" });
+};
   return (
     <>
       <div className=" flex flex-col justify-center overflow-x-hidden  gap-10 mx-auto pt-30 items-center lg:flex-row">
@@ -21,8 +22,8 @@ export default function Hero() {
             </h1>
           </div>
           <div className="flex gap-2 ">
-            <RippleButton className="inline-flex py-2 px-10 items-center gap-2 rounded-lg bg-blue-500  text-sm font-semibold text-white transition  duration-300 ease-in-out hover:-translate-y-1 hover:scale-100 hover:bg-blue-600 ">
-              Bog'lanish{" "}
+            <RippleButton onClick={scrollToCTA} className="inline-flex py-2 px-10 items-center gap-2 rounded-lg bg-blue-500  text-sm font-semibold text-white transition  duration-300 ease-in-out hover:-translate-y-1 hover:scale-100 hover:bg-blue-600 ">
+             Boshlash{" "}
               <span>
                 <svg
                   width="15"
@@ -51,6 +52,7 @@ export default function Hero() {
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
       </div>
+  
     </>
   );
 }

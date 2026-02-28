@@ -1,110 +1,82 @@
-import React from "react";
-import styled from "styled-components";
 
-const Login = () => {
+
+"use client";
+
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import { useNavigate } from "react-router-dom";
+
+export default function Login() {
+  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    fetch("https://json-api.uz/api/project/chizmachilik/auth/login", {
+      method: "POST",
+      headers: {  "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    })
+      .then((res) => {
+        // Agar javob xato bo‘lsa
+        if (!res.ok) {
+          return res.json().then((data) => {
+            throw new Error(data.message || "Login xato");
+          });
+        }
+        return res.json();
+      })
+      .then((data) => {
+        // Token saqlash va bosh sahifaga redirect
+        localStorage.setItem("token", data.access_token);
+        navigate("/");
+      })
+      .catch((err) => {
+        setError( "Login yoki parol xatto tekshiring!");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+
   return (
-    <StyledWrapper>
-      <form className="form">
-        <p className="form-title">Accauntga kirish</p>
-        <div className="input-container">
-          <input placeholder="Foydalanuvchi nomini kiriting" type="text" />
-        </div>
-        <div className="input-container">
-          <input placeholder="Parolni kiriting" type="password" />
-        </div>
-        <button className="submit" type="submit">
-          Sign in
-        </button>
-      </form>
-    </StyledWrapper>
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-neutral-900 dark:to-black">
+      <Card className="w-full max-w-md bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl rounded-3xl p-8">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+            Accauntga kirish
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <Input
+              placeholder="Foydalanuvchi nomini kiriting"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="Parolni kiriting"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {error && <p className="text-red-400 text-sm">{error}</p>}
+            <Button type="submit" className="w-full flex justify-center items-center">
+              {loading ? <Spinner className="w-5 h-5 text-white dark:text-gray-900" /> : "Kirish"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
-};
-
-const StyledWrapper = styled.div`
-  .form {
-    background-color: #fff;
-    display: block;
-    padding: 1rem;
-    max-width: 350px;
-    border-radius: 0.5rem;
-    box-shadow:
-      0 10px 15px -3px rgba(0, 0, 0, 0.1),
-      0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-
-  .form-title {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-    font-weight: 600;
-    text-align: center;
-    color: #000;
-  }
-
-  .input-container {
-    position: relative;
-  }
-
-  .input-container input,
-  .form button {
-    outline: none;
-    border: 1px solid #e5e7eb;
-    margin: 8px 0;
-  }
-
-  .input-container input {
-    background-color: #fff;
-    padding: 1rem;
-    padding-right: 3rem;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    width: 300px;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-
-  .input-container span {
-    display: grid;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    place-content: center;
-  }
-
-  .input-container span svg {
-    color: #9ca3af;
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .submit {
-    display: block;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-    background-color: blue;
-    color: #ffffff;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    font-weight: 500;
-    width: 100%;
-    border-radius: 0.5rem;
-    text-transform: uppercase;
-  }
-
-  .signup-link {
-    color: #6b7280;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    text-align: center;
-  }
-
-  .signup-link a {
-    text-decoration: underline;
-  }
-`;
-
-export default Login;
+}

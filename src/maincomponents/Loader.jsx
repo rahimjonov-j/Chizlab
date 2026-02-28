@@ -2,7 +2,7 @@ import React from 'react'
 import { LoaderIcon } from "lucide-react";
 export default function Loader() {
   return (
-    <div className=' fixed w-full h-screen inset-0 bg-white flex justify-center items-center z-100'>
+    <div className=' fixed w-full h-screen inset-0 bg-white/60 flex justify-center items-center z-100'>
         <LoaderIcon className="animate-spin" />
     </div>
   )
