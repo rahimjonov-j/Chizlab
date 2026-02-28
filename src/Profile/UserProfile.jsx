@@ -37,7 +37,7 @@ export default function ProfilePage() {
       ? localStorage.getItem("token")
       : null
 
-  // GET DATA
+// Data fetch
   const fetchData = () => {
     fetch(BASE_URL, {
       headers: {
@@ -127,7 +127,7 @@ const navigate=useNavigate()
   const handleLogout = () => {
     localStorage.removeItem("token")
     navigate("/")
-    window.location.reload()
+   
   }
 
   return (
@@ -156,7 +156,7 @@ const navigate=useNavigate()
     </Button>
   </div>
 
-  {/* MAIN CONTENT */}
+
   <div className="flex-1 overflow-y-auto p-10">
     <div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-bold">Kitoblar</h1>
