@@ -143,8 +143,8 @@ export default function Navbar() {
                     <Link to="/profile">Profil</Link>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={handleLogout}>
-                    Chiqish
+                  <DropdownMenuItem onClick={handleLogout} >
+                  <p className="text-red-700">  Chiqish</p>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

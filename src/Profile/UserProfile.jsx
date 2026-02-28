@@ -1,282 +1,196 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import {
-  Card,
-  CardContent
-} from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
+import { Navigate, useNavigate } from "react-router-dom"
 
 const BASE_URL = "https://json-api.uz/api/project/chizmachilik/materials"
 
 export default function ProfilePage() {
 
+  const emptyForm = {
+    title: "",
+    authors: "",
+    publishedAt: "",
+    size: "",
+    country: "",
+    language: "",
+    resourceType: "",
+    cover: "",
+    summary: ""
+  }
+
   const [materials, setMaterials] = useState([])
   const [open, setOpen] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
   const [selectedId, setSelectedId] = useState(null)
+  const [form, setForm] = useState(emptyForm)
 
-const [form, setForm] = useState({
-  title: "",
-  authors: "",
-  publishedAt: "",
-  size: "",
-  country: "",
-  language: "",
-  resourceType: "",
-  image: "",
-  description: ""
-})
-
-  const token = localStorage.getItem("token")
+  const token =
+    typeof window !== "undefined"
+      ? localStorage.getItem("token")
+      : null
 
   // GET DATA
-  const fetchData = async () => {
-    const res = await fetch(BASE_URL)
-    const data = await res.json()
-    setMaterials(data.data || data)
+  const fetchData = () => {
+    fetch(BASE_URL, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("GET error")
+        return res.json()
+      })
+      .then(res => setMaterials(res.data || []))
+      .catch(err => console.log(err))
   }
 
   useEffect(() => {
-    fetchData()
+    if (token) fetchData()
   }, [])
 
-  // LOGOUT
-  const handleLogout = () => {
-    localStorage.removeItem("token")
-    window.location.reload()
-  }
-
-  // INPUT CHANGE
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  // OPEN ADD MODAL
   const openAdd = () => {
     setIsEdit(false)
-    setForm({ title: "", description: "", image: "", author: "" })
+    setForm(emptyForm)
     setOpen(true)
   }
 
-  // OPEN EDIT MODAL
-const openEdit = (item) => {
-  setIsEdit(true)
-  setSelectedId(item.id)
+  const openEdit = (item) => {
+    setIsEdit(true)
+    setSelectedId(item.id)
 
-  setForm({
-    title: item.title || "",
-    authors: item.authors?.join(", ") || "",
-    publishedAt: item.publishedAt || "",
-    size: item.size || "",
-    country: item.country || "",
-    language: item.language || "",
-    resourceType: item.resourceType || "",
-    image: item.image || "",
-    description: item.description || ""
-  })
+    setForm({
+      title: item.title || "",
+      authors: Array.isArray(item.authors) ? item.authors.join(", ") : "",
+      publishedAt: item.publishedAt || "",
+      size: item.size || "",
+      country: item.country || "",
+      language: item.language || "",
+      resourceType: item.resourceType || "",
+      cover: item.cover || "",
+      summary: item.summary || ""
+    })
 
-  setOpen(true)
-}
-
-  // SAVE (POST or PATCH)
-const handleSubmit = async () => {
-
-  const payload = {
-    ...form,
-    authors: form.authors.split(",").map(a => a.trim())
+    setOpen(true)
   }
+const navigate=useNavigate()
+  const handleSubmit = () => {
 
-  if (isEdit) {
-    await fetch(`${BASE_URL}/${selectedId}`, {
-      method: "PATCH",
+    if (!token) {
+      alert("Token topilmadi! Login qiling.")
+      return
+    }
+
+    const payload = {
+      ...form,
+      authors: form.authors.split(",").map(a => a.trim())
+    }
+
+    const method = isEdit ? "PATCH" : "POST"
+    const url = isEdit
+      ? `${BASE_URL}/${selectedId}`
+      : BASE_URL
+
+    fetch(url, {
+      method: method,
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(payload)
     })
-  } else {
-    await fetch(BASE_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload)
-    })
+      .then(res => {
+        if (!res.ok) {
+          alert("Xatolik: " + res.status)
+          throw new Error("Save error")
+        }
+        return res.json()
+      })
+      .then(() => {
+        setOpen(false)
+        fetchData()
+      })
+      .catch(err => console.log(err))
   }
 
-  setOpen(false)
-  fetchData()
-}
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    navigate("/")
+    window.location.reload()
+  }
 
   return (
-    <div className="flex min-h-screen bg-muted/40 mt-25">
-
-      {/* SIDEBAR */}
-      <div className="w-[280px] bg-white border-r p-6 flex flex-col justify-between">
-
-        <div>
-          <div className="flex flex-col items-center gap-3">
-            <Avatar className="w-20 h-20">
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>AK</AvatarFallback>
-            </Avatar>
-            <h2 className="font-semibold text-lg">Azizbek Karimov</h2>
-          </div>
-
-          <Separator className="my-6" />
-
-          <div className="flex flex-col gap-2">
-            <Button variant="ghost" className="justify-start">
-              Profil
-            </Button>
-            <Button variant="ghost" className="justify-start">
-              Kitoblar
-            </Button>
-          </div>
-        </div>
-
-        <Button
-          variant="destructive"
-          onClick={handleLogout}
-        >
-          Chiqish
-        </Button>
+   <div className="flex h-screen bg-muted/40 mt-25">
+  {/* SIDEBAR */}
+  <div className="w-[280px]  bg-white border-r p-6 flex flex-col justify-between dark:bg-gray-900">
+    <div>
+      <div className="flex flex-col items-center gap-3">
+        <Avatar className="w-20 h-20">
+          <AvatarImage src="./avatar1.png" />
+          <AvatarFallback>Avatar</AvatarFallback>
+        </Avatar>
+        <h2 className="font-semibold text-lg">F.I.SH</h2>
       </div>
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 p-10">
+      <Separator className="my-6" />
 
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Materiallar</h1>
-          <Button onClick={openAdd}>+ Qo'shish</Button>
-        </div>
-
-        {/* CARDS */}
-        <div className="grid grid-cols-3 gap-6">
-
-          {materials.map(item => (
-            <Card
-              key={item.id}
-              className="relative group overflow-hidden"
-            >
-              <CardContent className="p-4">
-                <img
-                  src={item.image}
-                  className="w-full h-40 object-cover rounded-md"
-                />
-                <h3 className="font-semibold mt-3">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {item.author}
-                </p>
-              </CardContent>
-
-              {/* HOVER EDIT BUTTON */}
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                <Button
-                  onClick={() => openEdit(item)}
-                >
-                  Edit
-                </Button>
-              </div>
-            </Card>
-          ))}
-
-        </div>
+      <div className="flex flex-col gap-2">
+        <Button variant="ghost">Profil</Button>
+        <Button variant="ghost">Kitoblar</Button>
       </div>
-
-      {/* MODAL */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {isEdit ? "Tahrirlash" : "Yangi qo'shish"}
-            </DialogTitle>
-          </DialogHeader>
-
-         <div className="space-y-3">
-
-  <Input
-    name="title"
-    placeholder="Nomi"
-    value={form.title}
-    onChange={handleChange}
-  />
-
-  <Input
-    name="authors"
-    placeholder="Muallif (vergul bilan ajrating)"
-    value={form.authors}
-    onChange={handleChange}
-  />
-
-  <Input
-    name="publishedAt"
-    placeholder="Nashr yili"
-    value={form.publishedAt}
-    onChange={handleChange}
-  />
-
-  <Input
-    name="size"
-    placeholder="Hajmi (betlar)"
-    value={form.size}
-    onChange={handleChange}
-  />
-
-  <Input
-    name="country"
-    placeholder="Davlat"
-    value={form.country}
-    onChange={handleChange}
-  />
-
-  <Input
-    name="language"
-    placeholder="Til"
-    value={form.language}
-    onChange={handleChange}
-  />
-
-  <Input
-    name="resourceType"
-    placeholder="Resurs turi"
-    value={form.resourceType}
-    onChange={handleChange}
-  />
-
-  <Input
-    name="image"
-    placeholder="Rasm URL"
-    value={form.image}
-    onChange={handleChange}
-  />
-
-  <Textarea
-    name="description"
-    placeholder="Tavsif"
-    value={form.description}
-    onChange={handleChange}
-  />
-
-  <Button onClick={handleSubmit} className="w-full">
-    Saqlash
-  </Button>
-
-</div>
-        </DialogContent>
-      </Dialog>
-
     </div>
+
+    <Button variant="destructive" onClick={handleLogout}>
+      Chiqish
+    </Button>
+  </div>
+
+  {/* MAIN CONTENT */}
+  <div className="flex-1 overflow-y-auto p-10">
+    <div className="flex justify-between items-center mb-6">
+      <h1 className="text-2xl font-bold">Kitoblar</h1>
+      <Button onClick={openAdd}>+ Qo'shish</Button>
+    </div>
+
+    <div className="grid grid-cols-3 gap-6">
+      {materials.map(item => (
+        <Card key={item.id} className="relative group overflow-hidden">
+          <CardContent className="p-4 flex flex-col gap-y-1 pb-10">
+            <img
+              src={item.cover}
+              className="w-full h-60 object-cover rounded-md"
+            />
+            <h3 className="font-semibold">{item.title}</h3>
+            <p>
+              {Array.isArray(item.authors)
+                ? item.authors.join(", ")
+                : ""}
+            </p>
+            <p>{item.resourceType}</p>
+            <p>{item.publishedAt}</p>
+            <p>{item.summary}</p>
+          </CardContent>
+
+          <div className="absolute left-4 bottom-4">
+            <Button onClick={() => openEdit(item)}>
+              Edit
+            </Button>
+          </div>
+        </Card>
+      ))}
+    </div>
+  </div>
+</div>
   )
 }
