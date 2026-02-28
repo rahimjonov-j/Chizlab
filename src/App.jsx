@@ -28,16 +28,16 @@ export default function App() {
           ),
         },
         {
-          path: "about",
+          path: "/about",
           element: <About />,
         },{
-          path:"login",
+          path:"/login",
           element:<Login/>
         },{
-          path:"books",
+          path:"/books",
           element:<Allbooks/>
         },{
-          path:"profile",
+          path:"/profile",
           element:<UserProfile/>
         }
       ],
