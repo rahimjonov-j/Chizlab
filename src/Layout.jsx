@@ -1,7 +1,7 @@
-import { Outlet } from "react-router-dom"
-import Navbar from "./maincomponents/Navbar"
-import Footer from "./maincomponents/Footer"
-import Banner from "./AlertBanner/Banner"
+import { Outlet } from "react-router-dom";
+import Navbar from "./MainPage/Navbar";
+import Footer from "./MainPage/Footer";
+import Banner from "./Marquee/Banner";
 
 export default function Layout() {
   return (
@@ -11,5 +11,5 @@ export default function Layout() {
       <Outlet />
       <Footer />
     </>
-  )
+  );
 }

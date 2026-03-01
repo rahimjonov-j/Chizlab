@@ -1,6 +1,6 @@
 import { MorphingText } from "@/components/ui/text-morphing";
 import { RippleButton } from "../components/ripple";
-
+import { SparklesText } from "@/components/ui/sparkles-text"
 
 export default function Hero() {
   const scrollToCTA = () => {
@@ -51,6 +51,10 @@ export default function Hero() {
         >
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
+       
+      </div>
+      <div className=" lg:w-[1240px] justify-center mx-auto flex mt-20">
+     <SparklesText>Kitoblar</SparklesText>
       </div>
   
     </>

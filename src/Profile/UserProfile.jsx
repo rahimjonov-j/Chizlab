@@ -15,7 +15,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 
-// Rasmni import qilish Vite uchun
 import avatar1 from "../../public/avatar1.png";
 
 const BASE_URL = "https://json-api.uz/api/project/chizmachilik/materials";
@@ -38,25 +37,50 @@ export default function ProfilePage() {
   const [isEdit, setIsEdit] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [form, setForm] = useState(emptyForm);
+  const [loading, setLoading] = useState(false);
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
   const navigate = useNavigate();
 
-  const fetchData = () => {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+    }
+  }, []);
+
+  const fetchData = async () => {
     if (!token) return;
-    fetch(BASE_URL, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("GET error");
-        return res.json();
-      })
-      .then((res) => setMaterials(res.data || []))
-      .catch((err) => console.log(err));
+
+    try {
+      setLoading(true);
+      const res = await fetch(BASE_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("GET error");
+
+      const data = await res.json();
+
+      const materialsData = data.data || [];
+
+      const uniqueMaterials = materialsData.reduce((acc, current) => {
+        const x = acc.find((item) => item.id === current.id);
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          console.warn(`Duplicate ID found: ${current.id}`);
+          return acc;
+        }
+      }, []);
+
+      setMaterials(uniqueMaterials);
+    } catch (err) {
+      console.log("Fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -70,7 +94,11 @@ export default function ProfilePage() {
   const openAdd = () => {
     setIsEdit(false);
     setForm(emptyForm);
-    setOpen(true);
+    setSelectedId(null);
+
+    setTimeout(() => {
+      setOpen(true);
+    }, 0);
   };
 
   const openEdit = (item) => {
@@ -89,12 +117,19 @@ export default function ProfilePage() {
       summary: item.summary || "",
     });
 
-    setOpen(true);
+    setTimeout(() => {
+      setOpen(true);
+    }, 0);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!token) {
       alert("Token topilmadi! Login qiling.");
+      return;
+    }
+
+    if (!form.title || !form.authors) {
+      alert("Nomi va mualliflar majburiy maydonlar!");
       return;
     }
 
@@ -106,42 +141,54 @@ export default function ProfilePage() {
     const method = isEdit ? "PATCH" : "POST";
     const url = isEdit ? `${BASE_URL}/${selectedId}` : BASE_URL;
 
-    fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          alert("Xatolik: " + res.status);
-          throw new Error("Save error");
-        }
-        return res.json();
-      })
-      .then(() => {
-        setOpen(false);
-        fetchData();
-      })
-      .catch((err) => console.log(err));
+    try {
+      setLoading(true);
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        alert("Xatolik: " + res.status);
+        throw new Error("Save error");
+      }
+
+      const data = await res.json();
+
+      setOpen(false);
+      await fetchData();
+    } catch (err) {
+      console.log("Save error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
+  // img check
+  const getValidImageUrl = (url) => {
+    if (!url || url.trim() === "") {
+      return "https://via.placeholder.com/300x200?text=No+Image";
+    }
+    return url;
+  };
 
   return (
     <div className="flex h-screen bg-muted/40 mt-25">
       {/* SIDEBAR */}
-      <div className="w-[280px] bg-white border-r p-6 flex flex-col justify-between dark:bg-gray-900">
+      <div className="w-[280px]  bg-white border-r p-6 flex flex-col justify-between dark:bg-gray-900 fixed h-120 z-0">
         <div>
           <div className="flex flex-col items-center gap-3">
             <Avatar className="w-20 h-20">
-              <AvatarImage src={avatar1} />
-              <AvatarFallback>Avatar</AvatarFallback>
+              <AvatarImage src={avatar1} alt="Profile" />
+              <AvatarFallback>F.I</AvatarFallback>
             </Avatar>
             <h2 className="font-semibold text-lg">F.I.SH</h2>
           </div>
@@ -149,67 +196,95 @@ export default function ProfilePage() {
           <Separator className="my-6" />
 
           <div className="flex flex-col gap-2">
-            <Button variant="ghost">Profil</Button>
-            <Button variant="ghost">Kitoblar</Button>
+            <Button variant="ghost" className="w-full justify-start">
+              Profil
+            </Button>
+            <Button variant="ghost" className="w-full justify-start">
+              Kitoblar
+            </Button>
           </div>
         </div>
 
-        <Button variant="destructive" onClick={handleLogout}>
+        <Button variant="destructive" onClick={handleLogout} className="w-full">
           Chiqish
         </Button>
       </div>
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 overflow-y-auto p-10">
+      {/* book and add btn */}
+      <div className="flex-1 overflow-y-auto p-10 ml-[280px]">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Kitoblar</h1>
           <Button onClick={openAdd}>+ Qo'shish</Button>
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
-          {materials.map((item) => (
-            <Card key={item.id} className="relative group overflow-hidden">
-              <CardContent className="p-4 flex flex-col gap-y-1 pb-10">
-                <img
-                  src={item.cover}
-                  className="w-full h-60 object-cover rounded-md"
-                />
-                <h3 className="font-semibold">{item.title}</h3>
-                <p>
-                  {Array.isArray(item.authors) ? item.authors.join(", ") : ""}
-                </p>
-                <p>{item.resourceType}</p>
-                <p>{item.publishedAt}</p>
-                <p>{item.summary}</p>
-              </CardContent>
+        {loading && !materials.length ? (
+          <div className="text-center py-10">Yuklanmoqda...</div>
+        ) : (
+          <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {materials.map((item) => (
+              <Card
+                key={`material-${item.id}`}
+                className="relative group overflow-hidden"
+              >
+                <CardContent className="p-4 flex flex-col gap-y-1 pb-10">
+                  <img
+                    src={getValidImageUrl(item.cover)}
+                    alt={item.title || "Book cover"}
+                    className="w-full h-60 object-cover rounded-md"
+                    onError={(e) => {
+                      e.target.src =
+                        "https://via.placeholder.com/300x200?text=Error+Loading";
+                    }}
+                  />
+                  <h3 className="font-semibold text-lg mt-2">{item.title}</h3>
+                  <p className="text-sm text-gray-600">
+                    {Array.isArray(item.authors) ? item.authors.join(", ") : ""}
+                  </p>
+                  <p className="text-sm text-gray-500">{item.resourceType}</p>
+                  <p className="text-sm text-gray-500">{item.publishedAt}</p>
+                  <p className="text-sm text-gray-700 line-clamp-2">
+                    {item.summary}
+                  </p>
+                </CardContent>
 
-              <div className="absolute left-4 bottom-4">
-                <Button onClick={() => openEdit(item)}>Edit</Button>
-              </div>
-            </Card>
-          ))}
-        </div>
+                <div className="absolute left-4 bottom-4 ">
+                  <Button
+                    onClick={() => openEdit(item)}
+                    size="sm"
+                    className="bg-gray-950 text-white dark:bg-gray-800 "
+                  >
+                    Tahrirlash
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* MODAL */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>{isEdit ? "Tahrirlash" : "Yangi qo'shish"}</DialogTitle>
+            <DialogTitle>
+              {isEdit ? "Materialni tahrirlash" : "Yangi material qo'shish"}
+            </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto p-1">
             <Input
               name="title"
-              placeholder="Nomi"
+              placeholder="Nomi *"
               value={form.title}
               onChange={handleChange}
+              required
             />
             <Input
               name="authors"
-              placeholder="Mualliflar (vergul bilan)"
+              placeholder="Mualliflar (vergul bilan) *"
               value={form.authors}
               onChange={handleChange}
+              required
             />
             <Input
               name="publishedAt"
@@ -243,7 +318,7 @@ export default function ProfilePage() {
             />
             <Input
               name="cover"
-              placeholder="Rasm URL"
+              placeholder="Rasm URL (agar bo'lmasa placeholder ishlatiladi)"
               value={form.cover}
               onChange={handleChange}
             />
@@ -252,10 +327,15 @@ export default function ProfilePage() {
               placeholder="Tavsif"
               value={form.summary}
               onChange={handleChange}
+              rows={4}
             />
 
-            <Button onClick={handleSubmit} className="w-full">
-              Saqlash
+            <Button
+              onClick={handleSubmit}
+              className="w-full"
+              disabled={loading}
+            >
+              {loading ? "Saqlanmoqda..." : "Saqlash"}
             </Button>
           </div>
         </DialogContent>
