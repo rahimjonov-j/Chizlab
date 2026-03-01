@@ -63,14 +63,14 @@ export default function About() {
 
           <Accordion type="single" collapsible className="w-full max-w-3xl mx-auto">
             <AccordionItem value="item-1">
-              <AccordionTrigger>Sayt bepulmi?</AccordionTrigger>
+              <AccordionTrigger className="cursor-pointer">Sayt bepulmi?</AccordionTrigger>
               <AccordionContent>
                 Ha, sayt orqali kitoblar haqida ma’lumot olish mutlaqo bepul.
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-2">
-              <AccordionTrigger>Kitoblarni yuklab olish mumkinmi?</AccordionTrigger>
+              <AccordionTrigger className="cursor-pointer">Kitoblarni yuklab olish mumkinmi?</AccordionTrigger>
               <AccordionContent>
                 Hozircha yuklab olish funksiyasi mavjud emas, faqat ma’lumot
                 ko‘rish, o'zgartirish va qoshish funksiyalari mavjud.
@@ -78,7 +78,7 @@ export default function About() {
             </AccordionItem>
 
             <AccordionItem value="item-3">
-              <AccordionTrigger>Qanday janrlar mavjud?</AccordionTrigger>
+              <AccordionTrigger className="cursor-pointer">Qanday janrlar mavjud?</AccordionTrigger>
               <AccordionContent>
                 Geometrik, ilmiy,  tarixiy va boshqa ko‘plab janrlar
                 mavjud.
@@ -86,7 +86,7 @@ export default function About() {
             </AccordionItem>
 
             <AccordionItem value="item-4">
-              <AccordionTrigger>Hisob ochish shartmi?</AccordionTrigger>
+              <AccordionTrigger  className="cursor-pointer">Hisob ochish shartmi?</AccordionTrigger>
               <AccordionContent>
                 Yo‘q, asosiy funksiyalardan foydalanish uchun ro‘yxatdan
                 o‘tish talab qilinmaydi faqat o'zgartirmoqchi yoki kittob qo'shmoqchi bo'lsangiz hissob qo'shish kerak.

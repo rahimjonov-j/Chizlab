@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import avatar1 from "../../public/avatar1.png";
 
@@ -196,31 +196,33 @@ export default function ProfilePage() {
           <Separator className="my-6" />
 
           <div className="flex flex-col gap-2">
-            <Button variant="ghost" className="w-full justify-start">
+            <Button variant="ghost" className="w-full justify-start cursor-pointer">
               Profil
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+        <Link to="/books">
+            <Button variant="ghost" className="w-full justify-start cursor-pointer">
               Kitoblar
             </Button>
+        </Link>
           </div>
         </div>
 
-        <Button variant="destructive" onClick={handleLogout} className="w-full">
+        <Button variant="destructive" onClick={handleLogout} className="w-full cursor-pointer">
           Chiqish
         </Button>
       </div>
 
       {/* book and add btn */}
-      <div className="flex-1 overflow-y-auto p-10 ml-[280px]">
-        <div className="flex justify-between items-center mb-6">
+      <div className="flex-1 justify-center overflow-y-auto p-10 ml-[280px] lg:w-[1000px] mx-auto">
+        <div className="flex justify-between items-center mb-6 ">
           <h1 className="text-2xl font-bold">Kitoblar</h1>
-          <Button onClick={openAdd}>+ Qo'shish</Button>
+          <Button onClick={openAdd} className="cursor-pointer">+ Qo'shish</Button>
         </div>
 
         {loading && !materials.length ? (
           <div className="text-center py-10">Yuklanmoqda...</div>
         ) : (
-          <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid  grid-cols-1  md:grid-cols-2 lg:grid-cols-3  gap-6">
             {materials.map((item) => (
               <Card
                 key={`material-${item.id}`}
@@ -251,7 +253,7 @@ export default function ProfilePage() {
                   <Button
                     onClick={() => openEdit(item)}
                     size="sm"
-                    className="bg-gray-950 text-white dark:bg-gray-800 "
+                    className="bg-gray-950 text-white dark:bg-gray-800 cursor-pointer "
                   >
                     Tahrirlash
                   </Button>

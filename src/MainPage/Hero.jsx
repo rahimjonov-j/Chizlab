@@ -55,6 +55,9 @@ export default function Hero() {
       </div>
       <div className=" lg:w-[1240px] justify-center mx-auto flex mt-20">
      <SparklesText>Kitoblar</SparklesText>
+     <svg class="size-6 animate-bounce ...">
+  
+</svg>
       </div>
   
     </>

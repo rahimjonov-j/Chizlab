@@ -37,9 +37,13 @@ export default function Navbar() {
         
        
         <div>
-          <h1 className="text-6 font-bold text-black tracking-widest dark:text-white">
+    
+        <a href="#">
+            <h1 className="text-6 font-bold text-black tracking-widest dark:text-white cursor-pointer">
             CHIZLAB
           </h1>
+        </a>
+    
         </div>
 
       
@@ -153,7 +157,7 @@ export default function Navbar() {
           </TooltipProvider>
 
           {/* THEME BUTTON (tegmadim) */}
-          <AnimatedThemeToggler />
+          <AnimatedThemeToggler className="cursor-pointer" />
         </div>
       </nav>
     </div>
