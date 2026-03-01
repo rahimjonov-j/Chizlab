@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout";
 import Hero from "./MainPage/Hero";
-import BooksInfo from "./ApiReq/BooksInfo";
+import BooksInfo from "./ApiSec/BooksInfo";
 import Cta from "./MainPage/Cta";
 import About from "./MainPage/About";
 import Login from "./MainPage/Login";

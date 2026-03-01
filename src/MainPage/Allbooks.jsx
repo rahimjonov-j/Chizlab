@@ -9,7 +9,7 @@ import {
   CardHoverRevealMain,
 } from "../components/ui/card-hover-reveal";
 
-import Loader from "../maincomponents/Loader";
+import Loader from "./Loader";
 
 export default function Allbooks() {
   const [state, setState] = useState([]);

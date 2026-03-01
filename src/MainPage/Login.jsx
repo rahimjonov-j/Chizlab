@@ -27,7 +27,7 @@ export default function Login() {
       body: JSON.stringify({ username, password }),
     })
       .then((res) => {
-        // Agar javob xato bo‘lsa
+      
         if (!res.ok) {
           return res.json().then((data) => {
             throw new Error(data.message || "Login xato");
@@ -36,7 +36,7 @@ export default function Login() {
         return res.json();
       })
       .then((data) => {
-        // Token saqlash va bosh sahifaga redirect
+     
         localStorage.setItem("token", data.access_token);
         navigate("/");
       })
