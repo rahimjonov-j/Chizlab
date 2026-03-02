@@ -8,7 +8,7 @@ import {
 
 import Loader from "../MainPage/Loader";
 import BookCardSkeleton from "../MainPage/BookSkeleton";
-
+import { Card, CardContent, CardTitle,CardHeader } from "@/components/ui/card"
 export default function BooksInfo() {
   const [state, setState] = useState([]);
   const [loader, setLoader] = useState(true);
@@ -93,7 +93,7 @@ export default function BooksInfo() {
       {!loader && (
         <>
     
-          <div className="grid grid-cols-1 justify-center w-70 mt-30 mx-auto gap-5 md:grid-cols-2 md:w-[800px] lg:grid-cols-4 lg:w-[1240px]">
+          <div className="grid grid-cols-1 justify-center w-70 mt-30 mx-auto gap-5 md:grid-cols-2 md:w-[800px]  lg:grid-cols-4 lg:w-[1240px]">
             {(pageLoading
               ? Array.from({ length: itemsPerPage })
               : currentItems
@@ -101,34 +101,46 @@ export default function BooksInfo() {
               pageLoading ? (
                 <BookCardSkeleton key={i} />
               ) : (
-                <CardHoverReveal
-                  key={el.id}
-                  className="h-[430px] w-[300px] rounded-xl"
-                >
-                  <CardHoverRevealMain>
-                    <img
-                      src={
-                        el.cover ||
-                        "https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"
-                      }
+               
+                     <Card className="w-full max-w-xs h-160 overflow-hidden pt-0">
+                    <img className="w-full h-[400px]"
+                      src={el.cover || "https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"}
                       alt={el.title}
-                      className="size-full object-cover"
+                   width="300px"
+                   height="100px"
                     />
-                  </CardHoverRevealMain>
-
-                  <CardHoverRevealContent className="space-y-2 rounded-2xl bg-foreground/80 text-background p-4">
-                    <h3 className="font-bold">{el.title}</h3>
-
-                    <div className="text-sm space-y-1">
-                      <p><span className="font-semibold">Avtor:</span> {el.authors}</p>
-                      <p><span className="font-semibold">Davlati:</span> {el.country}</p>
-                      <p><span className="font-semibold">Tili:</span> {el.language}</p>
-                      <p><span className="font-semibold">Yili:</span> {el.publishedAt}</p>
-                    </div>
-
-                    <p className="text-xs italic">{el.summary}</p>
-                  </CardHoverRevealContent>
-                </CardHoverReveal>
+                    <CardHeader>
+                      <CardTitle>{el.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex gap-2">
+                        <span className="font-bold">Davlati:</span>
+              <p>{el.country}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="font-bold">Tilli:</span>
+              <p>{el.language}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="font-bold">O'lchami:</span>
+              <p>{el.size}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="font-bold">Nashir qilingan yil:</span>
+              <p>{el.publishedAt}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="font-bold">Kittob turi:</span>
+              <p>{el.resourceType}</p>
+                      </div>
+               
+                      <p className="text-muted-foreground text-sm">
+                     {el.summery}
+                      </p>
+                    </CardContent>
+                
+                  </Card>
+                          
               )
             )}
           </div>

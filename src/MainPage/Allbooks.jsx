@@ -46,7 +46,7 @@ export default function Allbooks() {
             return (
               <div key={el.id}>
        <Card className="w-full max-w-xs h-160 overflow-hidden pt-0">
-      <img
+      <img className="w-full h-[400px]"
         src={el.cover || "https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"}
         alt={el.title}
      width="300px"

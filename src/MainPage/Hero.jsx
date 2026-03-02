@@ -10,9 +10,9 @@ export default function Hero() {
   return (
     <>
       <div className=" flex flex-col justify-center overflow-x-hidden  gap-10 mx-auto pt-30 items-center lg:flex-row">
-        <div className="flex flex-col  items-center gap-10 lg:gap-20 ">
+        <div className="flex flex-col  items-center gap-5 lg:gap-13 ">
           <div className="text-center">
-            <h1 className="mb-4 font-bold text-4xl flex flex-col gap-3">
+            <h1 className=" font-bold text-4xl flex flex-col gap-2">
               Biznig saytimizda{" "}
               <MorphingText
                 words={["Ilmiy", "Maqola", "Taqdimot"]}
@@ -53,12 +53,7 @@ export default function Hero() {
         </div>
        
       </div>
-      <div className=" lg:w-[1240px] justify-center mx-auto flex mt-20">
-     <SparklesText>Kitoblar</SparklesText>
-     <svg class="size-6 animate-bounce ...">
-  
-</svg>
-      </div>
+ 
   
     </>
   );
