@@ -175,7 +175,7 @@ export default function ProfilePage() {
   // img check
   const getValidImageUrl = (url) => {
     if (!url || url.trim() === "") {
-      return "https://via.placeholder.com/300x200?text=No+Image";
+      return "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
     }
     return url;
   };
@@ -263,7 +263,7 @@ export default function ProfilePage() {
                     className="w-full h-60 object-cover rounded-md"
                     onError={(e) => {
                       e.target.src =
-                        "https://via.placeholder.com/300x200?text=Error+Loading";
+                        "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
                     }}
                   />
                   <h3 className="font-semibold text-lg mt-2">{item.title}</h3>
