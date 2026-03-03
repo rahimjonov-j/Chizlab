@@ -1,9 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
 export default function Footer() {
+  const location = useLocation();
   return (
     <div className="shadow-md   w-full  bg-gray-950  text-white   dark:bg-gray-900 gap-y-3 ">
+      {location.pathname !== "/profile" && (
+
       <footer className="flex  flex-col mx-auto justify-between p-7  md:flex-row lg:w-[1140px]">
         <div className="flex flex-col gap-3">
           <h1 className="text-6 font-bold text-white tracking-widest  ">
@@ -60,6 +63,7 @@ hover:after:w-full"
           </a>
         </div>
       </footer>
+      )}
     </div>
   );
 }

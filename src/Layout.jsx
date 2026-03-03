@@ -6,10 +6,15 @@ import Banner from "./Marquee/Banner";
 export default function Layout() {
   return (
     <>
+    <div className="min-h-screen flex flex-col">
+
       <Banner />
       <Navbar />
-      <Outlet />
+     <main className="flex-1">
+       <Outlet />
+     </main>
       <Footer />
+    </div>
     </>
   );
 }

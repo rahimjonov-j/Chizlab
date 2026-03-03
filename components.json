@@ -23,6 +23,7 @@
     "@sona-ui": "https://sona-ui.vercel.app/r/{name}.json",
     "@magicui": "https://magicui.design/r/{name}",
     "@animbits": "https://animbits.dev/r/{name}.json",
-    "@systaliko-ui": "https://systaliko-ui.vercel.app/r/{name}.json"
+    "@systaliko-ui": "https://systaliko-ui.vercel.app/r/{name}.json",
+    "@kanpeki": "https://kanpeki.vercel.app/r/{name}.json"
   }
 }
