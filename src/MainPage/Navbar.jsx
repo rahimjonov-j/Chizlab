@@ -16,23 +16,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Navbar() {
   const [isAuth, setIsAuth] = useState(false);
+  const [profileImage, setProfileImage] = useState("");
   const location = useLocation();
+  const { toast } = useToast();
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuth(!!token);
+    setProfileImage(localStorage.getItem("profile_image") || "");
   }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+
+    toast({ title: "Tizimdan chiqdingiz", duration: 1500 });
     setIsAuth(false);
   };
 
   return (
-    <div className="w-full fixed border top-7 bg-white/90 dark:bg-black z-50">
-      <nav className="w-90 p-4 mx-auto flex justify-between items-center sm:w-120 md:w-150 lg:w-[1140px]">
+    <div className="w-full fixed border pt-3 bg-white/90 dark:bg-black z-50">
+      <nav className="mx-auto flex w-full max-w-[1140px] items-center justify-between p-3 sm:p-4">
         <div>
           <a href="#">
             <h1 className="text-6 font-bold text-black tracking-widest dark:text-white cursor-pointer">
@@ -136,7 +142,7 @@ export default function Navbar() {
                   <button className=" border-gray-800 rounded-full border-1 p-0.5 shadow-md dark:border-white">
                     <Avatar className="cursor-pointer bg-black text-white dark:bg-white dark:text-black">
                       <AvatarFallback>
-                        <img src="avatar2.png" alt="" />
+                        <img src={profileImage || "avatar2.png"} alt="Avatar" />
                       </AvatarFallback>
                     </Avatar>
                   </button>
@@ -189,3 +195,10 @@ export default function Navbar() {
     </div>
   );
 }
+
+
+
+
+
+
+

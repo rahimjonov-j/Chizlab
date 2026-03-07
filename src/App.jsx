@@ -5,6 +5,8 @@ import BooksInfo from "./ApiSec/BooksInfo";
 import Cta from "./MainPage/Cta";
 import About from "./MainPage/About";
 import Login from "./MainPage/Login";
+import Information from "./MainPage/information";
+import Registr from "./auth/Registr";
 
 import Allbooks from "./MainPage/Allbooks";
 import UserProfile from "./Profile/UserProfile";
@@ -35,12 +37,20 @@ export default function App() {
           element: <Login />,
         },
         {
+          path: "/auth/registr",
+          element: <Registr />,
+        },
+        {
           path: "/books",
           element: <Allbooks />,
         },
         {
           path: "/profile",
           element: <UserProfile />,
+        },
+        {
+          path: "/information/:id",
+          element: <Information />,
         },
       ],
     },

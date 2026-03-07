@@ -153,10 +153,14 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
+  html, body, #root {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
   body {
     @apply bg-background text-foreground;
-    }
+  }
 }
 
 ::view-transition-old(root), ::view-transition-new(root) {
@@ -164,3 +168,4 @@
     mix-blend-mode: normal;
 
 }
+
