@@ -98,7 +98,7 @@ export default function ProfilePage() {
   const [selectedId, setSelectedId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("profile");
 
   const [firstName, setFirstName] = useState("");
@@ -653,3 +653,7 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+
+
+

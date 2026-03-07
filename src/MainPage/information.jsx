@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import Loader from "./Loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { getBooks, getCachedBooks } from "@/lib/books-cache";
 
 const FALLBACK_IMAGE =
   "https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
@@ -12,29 +13,54 @@ export default function Information() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const initialBooks = useMemo(() => getCachedBooks() || [], []);
+  const [books, setBooks] = useState(() => initialBooks);
+  const [loading, setLoading] = useState(() => initialBooks.length === 0);
   const [error, setError] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 6;
 
   useEffect(() => {
-    fetch("https://json-api.uz/api/project/chizmachilik/materials")
-      .then((res) => res.json())
-      .then((res) => setBooks(res.data || []))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, []);
+    let mounted = true;
+
+    if (initialBooks.length) {
+      return () => {
+        mounted = false;
+      };
+    }
+
+    setLoading(true);
+    getBooks()
+      .then(({ data }) => {
+        if (mounted) setBooks(data || []);
+      })
+      .catch(() => {
+        if (mounted) setError(true);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [initialBooks.length]);
 
   const selectedBook = useMemo(
     () => books.find((book) => String(book.id) === String(id)),
     [books, id]
   );
 
+  const selectedType = String(selectedBook?.resourceType || "").toLowerCase().trim();
+
   const recommendedBooks = useMemo(
-    () => books.filter((book) => String(book.id) !== String(id)),
-    [books, id]
+    () =>
+      books.filter((book) => {
+        if (String(book.id) === String(id)) return false;
+        return String(book.resourceType || "").toLowerCase().trim() === selectedType;
+      }),
+    [books, id, selectedType]
   );
 
   useEffect(() => {
@@ -138,7 +164,7 @@ export default function Information() {
       <div className="mt-10 rounded-3xl border bg-card p-5 md:p-7">
         <div className="mb-5 flex items-center justify-between gap-3">
           <h2 className="text-2xl font-bold">Tavsiya etiladigan kitoblar</h2>
-          <p className="text-sm text-muted-foreground">Gorizontal scroll + pagination</p>
+          <p className="text-sm text-muted-foreground">Bir xil turdagi kitoblar</p>
         </div>
 
         <div className="overflow-x-auto pb-2">
@@ -216,5 +242,3 @@ function InfoItem({ label, value }) {
     </div>
   );
 }
-
-

@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import Loader from "../MainPage/Loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getBooks, getCachedBooks } from "@/lib/books-cache";
 
 const FALLBACK_IMAGE =
   "https://static.vecteezy.com/system/resources/previews/004/141/669/original/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
 
 export default function BooksInfo() {
-  const [state, setState] = useState([]);
-  const [loader, setLoader] = useState(true);
+  const initialBooks = useMemo(() => getCachedBooks() || [], []);
+  const [state, setState] = useState(() => initialBooks);
+  const [loader, setLoader] = useState(() => initialBooks.length === 0);
   const [error, setError] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -24,12 +26,32 @@ export default function BooksInfo() {
   }, [loader]);
 
   useEffect(() => {
-    fetch("https://json-api.uz/api/project/chizmachilik/materials")
-      .then((res) => res.json())
-      .then((res) => setState(res.data || []))
-      .catch(() => setError(true))
-      .finally(() => setLoader(false));
-  }, []);
+    let mounted = true;
+
+    if (initialBooks.length) {
+      return () => {
+        mounted = false;
+      };
+    }
+
+    setLoader(true);
+    getBooks()
+      .then(({ data }) => {
+        if (mounted) {
+          setState(data || []);
+        }
+      })
+      .catch(() => {
+        if (mounted) setError(true);
+      })
+      .finally(() => {
+        if (mounted) setLoader(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [initialBooks.length]);
 
   const totalPages = Math.ceil(state.length / itemsPerPage);
 
@@ -79,10 +101,7 @@ export default function BooksInfo() {
       {!loader && (
         <>
           <div className="mx-auto mt-30 w-full max-w-[1240px] px-4 sm:px-6">
-            <div
-              key={currentPage}
-              className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
-            >
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {currentItems.map((el) => (
                 <Card key={el.id} className="flex min-h-[620px] w-full flex-col overflow-hidden pt-0">
                   <img
@@ -143,12 +162,12 @@ export default function BooksInfo() {
 
             {pages.map((page, index) =>
               page === "..." ? (
-                <span key={index} className="px-3 py-2">
+                <span key={`dots-${index}`} className="px-3 py-2">
                   ...
                 </span>
               ) : (
                 <button
-                  key={index}
+                  key={page}
                   onClick={() => handlePageChange(page)}
                   className={`rounded-md px-4 py-2 font-semibold transition ${
                     currentPage === page
@@ -174,4 +193,3 @@ export default function BooksInfo() {
     </>
   );
 }
-
