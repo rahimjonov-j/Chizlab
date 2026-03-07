@@ -9,9 +9,14 @@ export default function Footer() {
 
       <footer className="flex  flex-col mx-auto justify-between p-7  md:flex-row lg:w-[1140px]">
         <div className="flex flex-col gap-3">
-          <h1 className="text-6 font-bold text-white tracking-widest  ">
-            CHIZLAB
-          </h1>
+          <a href="#">
+         <div className="flex gap-2 items-center">
+          <img width="30px" src="./logo.svg" alt="logo" />
+            <h1 className="text-6 font-bold  text-blue-600 tracking-widest  cursor-pointer">
+              <span className="text-white dark:text-white">E</span>-BOOKS
+            </h1>
+        </div>
+          </a>
           <p className="pt-3">Manzil: Najot ta'lim</p>
           <p>Aloqa: (+998) 77 777 77 77</p>
           <h4 className="pt-3">© 2026 BookStore. All rights reserved.</h4>

@@ -39,13 +39,14 @@ export default function Navbar() {
   return (
     <div className="w-full fixed border pt-3 bg-white/90 dark:bg-black z-50">
       <nav className="mx-auto flex w-full max-w-[1140px] items-center justify-between p-3 sm:p-4">
-        <div>
           <a href="#">
-            <h1 className="text-6 font-bold text-black tracking-widest dark:text-white cursor-pointer">
-              CHIZLAB
+        <div className="flex gap-2 items-center">
+          <img width="30px" src="./logo.svg" alt="logo" />
+            <h1 className="text-6 font-bold  text-blue-600 tracking-widest  cursor-pointer">
+              <span className="text-black dark:text-white">E</span>-BOOKS
             </h1>
-          </a>
         </div>
+          </a>
 
         <div>
           <ul className="text-dark hidden md:flex gap-7 text-[16px]">
